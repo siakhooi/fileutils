@@ -1,0 +1,10 @@
+repo: siakhooi/rpms
+branch: main
+git_commit_user: fileutils
+git_commit_email: fileutils@siakhooi.github.io
+git_commit_message: "fileutils: Auto deploy"
+
+files:
+  - source: siakhooi-fileutils-*.fc*.noarch.rpm
+    target: docs/
+    items: 1

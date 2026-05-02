@@ -1,0 +1,10 @@
+repo: siakhooi/apt
+branch: main
+git_commit_user: fileutils
+git_commit_email: fileutils@siakhooi.github.io
+git_commit_message: "fileutils: Auto deploy"
+
+files:
+  - source: siakhooi-fileutils_*_amd64.deb
+    target: docs/pool/main/binary-amd64/
+    items: 1
