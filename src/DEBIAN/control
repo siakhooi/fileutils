@@ -3,5 +3,5 @@ Version: 0.6.0
 Maintainer: Siak Hooi <siakhooi@gmail.com>
 Depends: coreutils, bash
 Architecture: amd64
-Homepage: <https://github.com/siakhooi/bash-fileutils>
+Homepage: <https://github.com/siakhooi/fileutils>
 Description: common file utils

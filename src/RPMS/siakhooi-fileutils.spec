@@ -4,7 +4,7 @@ Release:        1%{?dist}
 Summary:        common file utils
 
 License:        MIT
-URL:            https://github.com/siakhooi/bash-fileutils
+URL:            https://github.com/siakhooi/fileutils
 Source0:        https://github.com/siakhooi/%{name}/archive/refs/tags/${version}.tar.gz
 BuildArch:      noarch
 
