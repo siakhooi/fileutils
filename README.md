@@ -46,4 +46,4 @@ sudo yum install siakhooi-fileutils
 ![GitHub Release Date](https://img.shields.io/github/release-date/siakhooi/fileutils?logo=github)
 
 [![Wise](https://img.shields.io/badge/Funding-Wise-33cb56.svg?logo=wise)](https://wise.com/pay/me/siakn3)
-![visitors](https://hit-tztugwlsja-uc.a.run.app/?outputtype=badge&counter=ghmd-bash-fileutils)
+![visitors](https://hit-tztugwlsja-uc.a.run.app/?outputtype=badge&counter=ghmd-fileutils)
