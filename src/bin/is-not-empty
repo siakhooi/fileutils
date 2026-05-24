@@ -1,37 +1,57 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Description: Check if a directory is not empty.
+# Usage: is-not-empty [options]
+#
+
+set -Eeuo pipefail
 
 usage() {
-  echo "Usage: $(basename "$0") [-h] directory_path"
+	echo "Usage: $(basename "$0") [-h] directory_path"
+	echo ""
+	echo "Check if a directory is not empty."
+	echo ""
+	echo "Options:"
+	echo "  -h        Show this help message and exit."
 }
+
 while getopts "h" arg; do
-  case $arg in
-  h)
-    usage
-    exit 0
-    ;;
-  *)
-    usage
-    exit 1
-    ;;
-  esac
+	case $arg in
+	h)
+		usage
+		exit 0
+		;;
+	*)
+		usage
+		exit 1
+		;;
+	esac
 done
 shift $((OPTIND - 1))
+
 if [[ $# -ne 1 ]]; then
-  usage
-  exit 0
+	usage
+	exit 1
 fi
 
-readonly directory=$1
+readonly directory="$1"
 
-if [ -d "$directory" ]; then
-  if [ -n "$(ls -A "$directory")" ]; then
-    echo "Directory '$directory' is not empty."
-    exit 0
-  else
-    echo "Directory '$directory' is empty."
-    exit 1
-  fi
+# Check for required command
+if ! command -v find >/dev/null 2>&1; then
+	echo "Error: 'find' command not found. Please install findutils." >&2
+	exit 2
+fi
+
+if [[ -d "$directory" ]]; then
+	# Use find to check for non-hidden and hidden files/dirs, excluding . and ..
+	if find -- "$directory" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
+		echo "Directory '$directory' is not empty."
+		exit 0
+	else
+		echo "Directory '$directory' is empty."
+		exit 1
+	fi
 else
-  echo "'$directory' is not exists or a directory"
-  exit 2
+	echo "'$directory' does not exist or is not a directory." >&2
+	exit 2
 fi

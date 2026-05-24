@@ -1,12 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Description: Find files by name or content.
+# Usage: find-files [options]
+#
+
+set -Eeuo pipefail
 
 usage() {
 	echo "Usage: $(basename "$0") [-h] [-w word_search] [-n word_search]"
-  echo "  -h  Show this help message"
-  echo "  -w  Search for a word within file contents"
-  echo "  -n  Search for a word within filenames"
+	echo ""
+	echo "Find files by name or content."
+	echo ""
+	echo "Options:"
+	echo "  -h        Show this help message and exit."
+	echo "  -w WORD   Search for a word within file contents."
+	echo "  -n WORD   Search for a word within filenames."
+	echo ""
+	echo "Note: Only one of -w or -n can be specified."
 }
-action=
+action=""
+word=""
 while getopts "hw:n:" arg; do
 	case $arg in
 	h)
@@ -14,21 +27,21 @@ while getopts "hw:n:" arg; do
 		exit 0
 		;;
 	w)
-    if [[ -n "$action" ]]; then
-      echo "Error: Only one of -w or -n can be specified."
-      usage
-      exit 1
-    fi
-		action=find-in-files
+		if [[ -n "$action" ]]; then
+			echo "Error: Only one of -w or -n can be specified." >&2
+			usage
+			exit 1
+		fi
+		action="find-in-files"
 		word="$OPTARG"
 		;;
 	n)
-    if [[ -n "$action" ]]; then
-      echo "Error: Only one of -w or -n can be specified."
-      usage
-      exit 1
-    fi
-		action=find-in-filenames
+		if [[ -n "$action" ]]; then
+			echo "Error: Only one of -w or -n can be specified." >&2
+			usage
+			exit 1
+		fi
+		action="find-in-filenames"
 		word="$OPTARG"
 		;;
 	*)
@@ -38,19 +51,34 @@ while getopts "hw:n:" arg; do
 	esac
 done
 shift $((OPTIND - 1))
+
 if [[ $# -ne 0 ]]; then
 	usage
-	exit 0
+	exit 1
 fi
 
-if [[ -z $action ]]; then
+if [[ -z "$action" ]]; then
 	usage
-	exit 0
+	exit 1
 fi
 
-if [[ $action == "find-in-files" ]]; then
-	grep --color --files-with-matches --recursive "$word" .
-
-elif [[ $action == "find-in-filenames" ]]; then
-	find . -name "$word"
+# Check for required commands
+if [[ "$action" == "find-in-files" ]]; then
+	if ! command -v grep >/dev/null 2>&1; then
+		echo "Error: 'grep' command not found. Please install grep." >&2
+		exit 2
+	fi
+	if ! grep --color --files-with-matches --recursive -- "$word" .; then
+		echo "Warning: No matches found for content '$word'." >&2
+		exit 1
+	fi
+elif [[ "$action" == "find-in-filenames" ]]; then
+	if ! command -v find >/dev/null 2>&1; then
+		echo "Error: 'find' command not found. Please install findutils." >&2
+		exit 2
+	fi
+	if ! find . -name "$word"; then
+		echo "Warning: No files found with name pattern '$word'." >&2
+		exit 1
+	fi
 fi

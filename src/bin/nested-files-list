@@ -1,32 +1,71 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Description: List nested files or directories.
+# Usage: nested-files-list [options]
+#
 
-mode="$1"
-ext="$2"
+set -Eeuo pipefail
 
-root="."
+usage() {
+	echo "Usage:"
+	echo "  $0 -d [rootdir]              # list subdirectories"
+	echo "  $0 -f <extension> [rootdir]  # list files with given extension (without extension)"
+	exit 1
+}
 
-if [[ "$mode" == "-d" && -n "$2" ]]; then
-  root="$2"
-elif [[ "$mode" == "-f" && -n "$3" ]]; then
-  root="$3"
+# Check for required commands
+for cmd in find sed grep sort; do
+	if ! command -v "$cmd" >/dev/null 2>&1; then
+		echo "Error: Required command '$cmd' not found." >&2
+		exit 2
+	fi
+done
+
+# Argument parsing and validation
+if [[ $# -lt 1 ]]; then
+	usage
 fi
 
+mode="$1"
+ext=""
+root="."
+
+if [[ "$mode" == "-d" ]]; then
+	if [[ $# -ge 2 ]]; then
+		root="$2"
+	fi
+elif [[ "$mode" == "-f" ]]; then
+	if [[ $# -lt 2 ]]; then
+		usage
+	fi
+	ext="$2"
+	if [[ $# -ge 3 ]]; then
+		root="$3"
+	fi
+else
+	usage
+fi
+
+# Remove trailing slash from root unless it's /
 if [[ "$root" != "/" ]]; then
-  root="${root%/}"
+	root="${root%/}"
 fi
 
 if [[ "$mode" == "-d" ]]; then
-  find "$root" -type d | sed "s|^$root/||" | sed "s|^$root\$||" | grep -v '^$' | sort
-
-  elif [[ "$mode" == "-f" && -n "$ext" ]]; then
-  find "$root" -type f -name "*.$ext" \
-  | sed "s|^$root/||" \
-  | sed "s/\.$ext$//" \
-  | sort
-
+	if [[ ! -d "$root" ]]; then
+		echo "Error: Directory '$root' does not exist or is not a directory." >&2
+		exit 2
+	fi
+	find -- "$root" -type d | sed "s|^$root/||" | sed "s|^$root$||" | grep -v '^$' | sort
+elif [[ "$mode" == "-f" && -n "$ext" ]]; then
+	if [[ ! -d "$root" ]]; then
+		echo "Error: Directory '$root' does not exist or is not a directory." >&2
+		exit 2
+	fi
+	find -- "$root" -type f -name "*.$ext" |
+		sed "s|^$root/||" |
+		sed "s/\.$ext$//" |
+		sort
 else
-  echo "Usage:"
-  echo "  $0 -d [rootdir]              # list subdirectories"
-  echo "  $0 -f <extension> [rootdir]  # list files with given extension (without extension)"
-  exit 1
+	usage
 fi

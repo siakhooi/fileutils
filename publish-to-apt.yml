@@ -2,7 +2,7 @@ repo: siakhooi/apt
 branch: main
 git_commit_user: fileutils
 git_commit_email: fileutils@siakhooi.github.io
-git_commit_message: "fileutils: Auto deploy"
+git_commit_message: "{repo_name}: {ref_name} | {commit_short}"
 
 files:
   - source: siakhooi-fileutils_*_amd64.deb

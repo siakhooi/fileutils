@@ -1,33 +1,53 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Description: Delete empty directories.
+# Usage: delete-directory-if-empty [options]
+#
+
+set -Eeuo pipefail
 
 usage() {
-  echo "Usage: $(basename "$0") [-h] directory..."
+	echo "Usage: $(basename "$0") [-h] directory..."
+	echo ""
+	echo "Delete empty directories."
+	echo ""
+	echo "Options:"
+	echo "  -h        Show this help message and exit."
 }
+
 while getopts "h" arg; do
-  case $arg in
-    h)
-      usage
-      exit 0
-    ;;
-    *)
-      usage
-      exit 1
-    ;;
-  esac
+	case $arg in
+	h)
+		usage
+		exit 0
+		;;
+	*)
+		usage
+		exit 1
+		;;
+	esac
 done
 shift $((OPTIND - 1))
+
 if [[ $# -eq 0 ]]; then
-  usage
-  exit 0
+	usage
+	exit 0
 fi
 
-set -e
+# Check for find command
+if ! command -v find >/dev/null 2>&1; then
+	echo "Error: 'find' command not found. Please install findutils." >&2
+	exit 2
+fi
 
 for targetDir in "$@"; do
-  if [[ -d $targetDir ]]; then
-    find "$targetDir" -empty -type d -print -delete
-  else
-    echo "Directory $targetDir does not exist, skipping." >&2
-    continue
-  fi
+	if [[ -d "$targetDir" ]]; then
+		# Use -- to prevent issues with directory names starting with a dash
+		if ! find -- "$targetDir" -empty -type d -print -delete 2>/dev/null; then
+			echo "Warning: Failed to delete some directories in '$targetDir' (permission denied or other error)." >&2
+		fi
+	else
+		echo "Directory '$targetDir' does not exist, skipping." >&2
+		continue
+	fi
 done

@@ -1,5 +1,5 @@
 target
-siakhooi-fileutils-*.rpm
-siakhooi-fileutils-*.rpm.sha*sum
-siakhooi-fileutils_*.deb
-siakhooi-fileutils_*.deb.sha*sum
+*.deb
+*.deb.sha*sum
+*.rpm
+*.rpm.sha*sum

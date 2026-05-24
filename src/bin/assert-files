@@ -1,4 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Description: Assert the existence or non-existence of files and directories.
+# Usage: assert-files [options]
+#
+
+set -Eeuo pipefail
+IFS=$'\n\t'
 
 usage() {
 	echo "Usage: $(basename "$0") [-h] [-s] [-e file] [-E file] [-d directory] [-D directory]"
@@ -7,11 +14,17 @@ usage() {
 	echo " -E file  : file must not exists"
 	echo " -d dir   : directory must exists"
 	echo " -D dir   : directory must not exists"
-  echo " -s       : silent mode, only output errors"
+	echo " -s       : silent mode, only output errors"
 }
+
 silent=0
 error=0
-while getopts "hse:E:d:D:" arg; do
+
+bump_error() {
+	error=$((error + 1))
+}
+
+while getopts ":hse:E:d:D:" arg; do
 	case $arg in
 	h)
 		usage
@@ -26,7 +39,7 @@ while getopts "hse:E:d:D:" arg; do
 			if [[ $silent -eq 0 ]]; then
 				echo.error "❌ File not found: $file"
 			fi
-			((error++))
+			bump_error
 		else
 			if [[ $silent -eq 0 ]]; then
 				echo "✅ File exists: $file"
@@ -39,7 +52,7 @@ while getopts "hse:E:d:D:" arg; do
 			if [[ $silent -eq 0 ]]; then
 				echo.error "❌ File found: $file"
 			fi
-			((error++))
+			bump_error
 		else
 			if [[ $silent -eq 0 ]]; then
 				echo "✅ File not exists: $file"
@@ -52,7 +65,7 @@ while getopts "hse:E:d:D:" arg; do
 			if [[ $silent -eq 0 ]]; then
 				echo.error "❌ Directory not found: $dir"
 			fi
-			((error++))
+			bump_error
 		else
 			if [[ $silent -eq 0 ]]; then
 				echo "✅ Directory exists: $dir"
@@ -65,29 +78,41 @@ while getopts "hse:E:d:D:" arg; do
 			if [[ $silent -eq 0 ]]; then
 				echo.error "❌ Directory found: $dir"
 			fi
-			((error++))
+			bump_error
 		else
 			if [[ $silent -eq 0 ]]; then
 				echo "✅ Directory not exists: $dir"
 			fi
 		fi
 		;;
-	*)
-    if [[ $silent -eq 0 ]]; then
-      echo.error "❌ Invalid option: -$OPTARG"
-    fi
-		usage
-		((error++))
+	:)
+		if [[ $silent -eq 0 ]]; then
+			echo.error "❌ Missing argument for: -$OPTARG"
+		fi
+		usage err
+		bump_error
+		;;
+	\? | *)
+		if [[ $silent -eq 0 ]]; then
+			echo.error "❌ Invalid option: -$OPTARG"
+		fi
+		usage err
+		bump_error
 		;;
 	esac
 done
 shift $((OPTIND - 1))
+
 if [[ $# -ne 0 ]]; then
-  if [[ $silent -eq 0 ]]; then
-    echo.error "❌ Unexpected arguments: $*"
-  fi
-	usage
-	((error++))
+	if [[ $silent -eq 0 ]]; then
+		echo.error "❌ Unexpected arguments: $*"
+	fi
+	usage err
+	bump_error
 fi
 
-exit $error
+# Exit codes wrap modulo 256; cap to keep a non-zero failure visible.
+if ((error > 255)); then
+	exit 255
+fi
+exit "$error"

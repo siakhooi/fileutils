@@ -1,10 +1,25 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+#
+# Description: Set the version for the Debian and RPM packages.
+# Usage: ./set-version.sh [options]
+#
+
+set -euo pipefail
 
 # shellcheck disable=SC1091
 . ./release.env
 
-sed -i 'src/DEBIAN/control' -e 's@Version: .*@Version: '"$COMPONENT_VERSION"'@g'
-sed -i 'src/DEBIAN/control' -e 's@Package: .*@Package: '"$COMPONENT_NAME"'@g'
-sed -i 'src/RPMS/siakhooi-fileutils.spec' -e 's@Version:        .*@Version:        '"$COMPONENT_VERSION"'@g'
-sed -i 'src/RPMS/siakhooi-fileutils.spec' -e 's@Name:           .*@Name:           '"$COMPONENT_NAME"'@g'
+if [[ -z "${RELEASE_VERSION:-}" ]]; then
+	echo "Error: RELEASE_VERSION must be set in release.env."
+	exit 1
+fi
+
+# shellcheck disable=SC1091
+. ./build.env
+if [[ -z "${PACKAGE_NAME:-}" ]]; then
+	echo "Error: PACKAGE_NAME variable not set in build.env."
+	exit 1
+fi
+
+sed -i 'src/DEBIAN/control' -e 's@Version: .*@Version: '"$RELEASE_VERSION"'@g'
+sed -i "src/RPMS/${PACKAGE_NAME}.spec" -e 's@Version:        .*@Version:        '"$RELEASE_VERSION"'@g'
