@@ -1,5 +1,5 @@
 Package: siakhooi-fileutils
-Version: 0.6.0
+Version: 0.7.0
 Maintainer: Siak Hooi <siakhooi@gmail.com>
 Depends: coreutils, bash
 Architecture: amd64

@@ -12,7 +12,6 @@ build-rpm: clean
 	scripts/build-rpms.sh
 shellcheck:
 	scripts/shellcheck.sh
-un-all: undeploy clean
 all-deb: clean set-version build-deb deb-install
 all-rpm: clean set-version build-rpm rpm-install
 
