@@ -72,7 +72,7 @@ generate_rpm_checksums() {
 # ===== Main Logic =====
 main() {
 
-	parse_args
+	parse_args "$@"
 	clean_rpmbuild
 	setup_rpmbuild_tree
 
