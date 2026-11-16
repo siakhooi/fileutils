@@ -1,0 +1,35 @@
+name: Release
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/workflow-build.yml
+  release-assets:
+    needs: build
+    uses: ./.github/workflows/publish-to-release-assets.yml
+  siakhooi-apt-linux:
+    needs: build
+    uses: ./.github/workflows/publish-to-siakhooi-gh-repository.yml
+    secrets:
+      PUBLISH_TO_GITHUB_REPO_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_REPO_TOKEN }}
+    with:
+      config_file: publish-to-apt-linux.yml
+  siakhooi-apt-termux:
+    needs: build
+    uses: ./.github/workflows/publish-to-siakhooi-gh-repository.yml
+    secrets:
+      PUBLISH_TO_GITHUB_REPO_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_REPO_TOKEN }}
+    with:
+      config_file: publish-to-apt-termux.yml
+  siakhooi-rpms:
+    needs: build
+    uses: ./.github/workflows/publish-to-siakhooi-gh-repository.yml
+    secrets:
+      PUBLISH_TO_GITHUB_REPO_TOKEN: ${{ secrets.PUBLISH_TO_GITHUB_REPO_TOKEN }}
+    with:
+      config_file: publish-to-rpms.yml

@@ -1,0 +1,16 @@
+name: Build
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+  workflow_call:
+
+jobs:
+  shellcheck:
+    uses: ./.github/workflows/shellcheck.yml
+  build-packages:
+    uses: ./.github/workflows/build-packages.yml
+    needs: shellcheck

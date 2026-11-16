@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+#
+# Description: description of fileutils
+# Usage: siakhooi-fileutils options
+#
+
+set -euo pipefail
+
+# ===== Usage =====
+usage() {
+  echo "Usage: $(basename "$0") options..."
+}
+# ===== Constants =====
+readonly prefix=${PREFIX:-/usr}
+
+# ===== Source libraries =====
+# shellcheck disable=SC1091
+source "$prefix/share/siakhooi-fileutils/function.sh"
+
+# ===== Argument Parsing =====
+parse_args() {
+  OPTIND=1
+  while getopts "h" arg; do
+    case $arg in
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+
+  if [[ $# -ne 0 ]]; then
+    usage
+    exit 1
+  fi
+}
+# === logic ====
+hello() {
+  echo "Hello, siakhooi-fileutils!"
+}
+
+# ===== Main Logic =====
+main() {
+  parse_args "$@"
+
+  hello
+
+}
+
+# ===== Entrypoint =====
+main "$@"

@@ -1,0 +1,10 @@
+repo: siakhooi/apt-termux
+branch: main
+git_commit_user: fileutils
+git_commit_email: fileutils@siakhooi.github.io
+git_commit_message: "{repo_name}: {ref_name} | {commit_short}"
+
+files:
+  - source: target/termux/siakhooi-fileutils_*-1_all.deb
+    target: docs/pool/main/siakhooi-fileutils/
+    items: 1

@@ -1,0 +1,24 @@
+name: ${PACKAGE_NAME}
+arch: all
+platform: linux
+version: ${RELEASE_VERSION}
+release: "1"
+maintainer: "Siak Hooi <siakhooi@gmail.com>"
+description: description of fileutils
+homepage: https://github.com/siakhooi/fileutils
+license: MIT
+
+contents:
+  - src: ./src/bin/
+    dst: ${PREFIX}/bin/
+    expand: true
+    file_info:
+      mode: 0755
+  - src: ./src/lib
+    dst: ${PREFIX}/lib/${PACKAGE_NAME}
+    expand: true
+    type: tree
+  - src: ./src/share
+    dst: ${PREFIX}/share/${PACKAGE_NAME}
+    expand: true
+    type: tree
