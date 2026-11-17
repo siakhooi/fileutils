@@ -10,5 +10,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: sudo apt install shellcheck
+      - run: sudo apt install shellcheck shfmt
+      - run: shfmt -i 2 -d src/bin scripts
       - run: ./scripts/shellcheck.sh

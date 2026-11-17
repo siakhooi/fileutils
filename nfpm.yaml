@@ -1,0 +1,16 @@
+name: ${PACKAGE_NAME}
+arch: all
+platform: linux
+version: ${RELEASE_VERSION}
+release: "1"
+maintainer: "Siak Hooi <siakhooi@gmail.com>"
+description: description of fileutils
+homepage: https://github.com/siakhooi/fileutils
+license: MIT
+
+contents:
+  - src: ./src/bin/
+    dst: ${PREFIX}/bin/
+    expand: true
+    file_info:
+      mode: 0755

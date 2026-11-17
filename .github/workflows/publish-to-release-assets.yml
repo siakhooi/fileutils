@@ -1,0 +1,36 @@
+name: Publish To Release Assets
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: packages
+          path: |
+            ./target/
+
+      - run: |
+          mkdir -p target/release
+          for f in target/deb/*.deb; do
+            cp "$f" "target/release/$(basename "${f%.deb}_linux.deb")"
+          done
+          for f in target/termux/*.deb; do
+            cp "$f" "target/release/$(basename "${f%.deb}_termux.deb")"
+          done
+          cp target/rpm/*.rpm target/release
+          ls -l ./target/release
+      - uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # 2.11.5
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: ./target/release/*
+          tag: ${{ github.event.release.tag_name }}

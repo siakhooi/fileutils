@@ -5,6 +5,6 @@ git_commit_email: fileutils@siakhooi.github.io
 git_commit_message: "{repo_name}: {ref_name} | {commit_short}"
 
 files:
-  - source: siakhooi-fileutils-*.fc*.noarch.rpm
+  - source: target/rpm/siakhooi-fileutils-*-1.noarch.rpm
     target: docs/
     items: 1

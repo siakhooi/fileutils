@@ -7,16 +7,16 @@
 set -euo pipefail
 
 if ! command -v gh &>/dev/null; then
-	echo "Error: GitHub CLI (gh) is not installed. Please install it to run this script."
-	exit 1
+  echo "Error: GitHub CLI (gh) is not installed. Please install it to run this script."
+  exit 1
 fi
 
 # shellcheck disable=SC1091
 . ./release.env
 
 if [[ -z "${RELEASE_VERSION:-}" || -z "${RELEASE_TITLE:-}" || -z "${RELEASE_NOTE:-}" ]]; then
-	echo "Error: RELEASE_VERSION, RELEASE_TITLE, and RELEASE_NOTE must be set in release.env."
-	exit 1
+  echo "Error: RELEASE_VERSION, RELEASE_TITLE, and RELEASE_NOTE must be set in release.env."
+  exit 1
 fi
 
 set -x
