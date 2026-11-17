@@ -1,5 +1,0 @@
-target
-*.deb
-*.deb.sha*sum
-*.rpm
-*.rpm.sha*sum
