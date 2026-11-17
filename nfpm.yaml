@@ -14,11 +14,3 @@ contents:
     expand: true
     file_info:
       mode: 0755
-  - src: ./src/lib
-    dst: ${PREFIX}/lib/${PACKAGE_NAME}
-    expand: true
-    type: tree
-  - src: ./src/share
-    dst: ${PREFIX}/share/${PACKAGE_NAME}
-    expand: true
-    type: tree
